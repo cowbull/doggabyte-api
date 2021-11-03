@@ -116,6 +116,12 @@ public class AuthController {
 		}
 
 		user.setRoles(roles);
+		user.setAccess("admin");
+		user.setAddress("beijing");
+		user.setCountry("China");
+		user.setPhone("010-88888888");
+		user.setTitle("manager");
+		user.setAvatar("https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png");
 		userRepository.save(user);
 
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));

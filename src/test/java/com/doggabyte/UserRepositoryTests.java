@@ -1,4 +1,4 @@
-package com.sandstar;
+package com.doggabyte;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,20 +25,20 @@ public class UserRepositoryTests {
     @Autowired
     private TestEntityManager entityManager;
 
+
     @Test
     public void testCreateUser() {
         User user = new User();
-        user.setEmail("leoleo@gmail.com");
-        user.setPassword("666666");
-        user.setName("leoleo");
+        user.setEmail("test2@gmail.com");
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        user.setPassword(encoder.encode("666666"));
+        user.setName("test2");
         user.setAccess("admin");
         user.setAddress("beijing");
         user.setCountry("China");
         user.setPhone("010-88888888");
         user.setTitle("manager");
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String encodedPassword = encoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+        user.setAvatar("https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png");
         User savedUser = repo.save(user);
         User exsitUser = entityManager.find(User.class, savedUser.getUserid());
 

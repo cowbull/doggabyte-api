@@ -13,7 +13,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import java.util.Arrays;
 
 @MappedTypes(User.class)
-@MapperScan("com.sandstar.repository")
+@MapperScan({"com.doggabyte.repository", "com.doggabyte.security"})
 @SpringBootApplication
 public class Application {
 
