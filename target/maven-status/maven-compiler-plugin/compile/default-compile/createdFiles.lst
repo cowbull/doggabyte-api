@@ -2,7 +2,9 @@ com/doggabyte/payload/response/MessageResponse.class
 com/doggabyte/payload/request/SignupRequest.class
 com/doggabyte/security/jwt/AuthEntryPointJwt.class
 com/doggabyte/repository/RoleRepository.class
+com/doggabyte/model/ErrorResponse.class
 com/doggabyte/payload/request/UserLoginDetails.class
+com/doggabyte/exception/UserNotFoundException.class
 com/doggabyte/DemoController.class
 com/doggabyte/security/jwt/JwtUtils.class
 com/doggabyte/ServletInitializer.class
@@ -10,6 +12,7 @@ com/doggabyte/security/config/WebSecurityConfig.class
 com/doggabyte/model/ERole.class
 com/doggabyte/controller/TestController.class
 com/doggabyte/payload/response/ResponseForFront.class
+com/doggabyte/exception/RestExceptionHandler.class
 com/doggabyte/payload/response/ResponseBasic.class
 com/doggabyte/model/Role.class
 com/doggabyte/security/services/UserDetailsImpl.class
@@ -18,6 +21,7 @@ com/doggabyte/security/jwt/AuthTokenFilter.class
 com/doggabyte/payload/response/Response.class
 com/doggabyte/security/jwt/RedisUtil.class
 com/doggabyte/security/services/UserDetailsServiceImpl.class
+com/doggabyte/exception/InvalidJWTException.class
 com/doggabyte/payload/response/JwtResponse.class
 com/doggabyte/payload/request/LoginRequest.class
 com/doggabyte/controller/AuthController.class
