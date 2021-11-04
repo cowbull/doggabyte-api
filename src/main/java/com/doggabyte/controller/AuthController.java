@@ -1,6 +1,8 @@
 package com.doggabyte.controller;
 
+import com.doggabyte.exception.RestExceptionHandler;
 import com.doggabyte.model.ERole;
+import com.doggabyte.model.ErrorResponse;
 import com.doggabyte.model.Role;
 import com.doggabyte.model.User;
 import com.doggabyte.payload.request.LoginRequest;
@@ -12,6 +14,7 @@ import com.doggabyte.repository.UserRepository;
 import com.doggabyte.security.jwt.JwtUtils;
 import com.doggabyte.security.services.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -72,13 +75,14 @@ public class AuthController {
 		if (userRepository.existsByName(signUpRequest.getUsername())) {
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("Error: Username is already taken!"));
+					.body(new ErrorResponse(HttpStatus.CONFLICT.value(), "Error: Username is already taken!", false));
 		}
 
 		if (userRepository.existsByEmail(signUpRequest.getEmail())) {
 			return ResponseEntity
 					.badRequest()
-					.body(new MessageResponse("Error: Email is already in use!"));
+					.body(new ErrorResponse
+							(HttpStatus.CONFLICT.value(), "Error: Email is already in use!", false));
 		}
 
 		// Create new user's account

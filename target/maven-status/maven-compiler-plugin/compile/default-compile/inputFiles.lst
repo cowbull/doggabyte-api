@@ -1,6 +1,8 @@
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/security/services/UserDetailsServiceImpl.java
+/Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/exception/RestExceptionHandler.java
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/Application.java
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/payload/request/SignupRequest.java
+/Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/exception/InvalidJWTException.java
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/ServletInitializer.java
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/controller/AuthController.java
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/controller/UserController.java
@@ -11,9 +13,11 @@
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/model/User.java
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/model/Role.java
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/security/jwt/AuthEntryPointJwt.java
+/Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/exception/UserNotFoundException.java
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/security/jwt/JwtUtils.java
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/payload/response/ResponseForFront.java
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/controller/TestController.java
+/Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/model/ErrorResponse.java
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/DemoController.java
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/repository/RoleRepository.java
 /Users/lihao/work/doggabyte-api/src/main/java/com/doggabyte/security/jwt/AuthTokenFilter.java
