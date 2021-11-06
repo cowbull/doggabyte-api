@@ -18,11 +18,15 @@ import java.util.Date;
 public class JwtUtils {
 	private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-	@Value("${app.jwtSecret}")
+	@Value("${doggabyte.app.jwtSecret}")
 	private String jwtSecret;
 
-	@Value("${app.jwtExpirationMs}")
+	@Value("${doggabyte.app.jwtExpirationMs}")
 	private int jwtExpirationMs;
+
+	public String generateJwtToken(UserDetailsImpl userPrincipal) {
+		return generateTokenFromUsername(userPrincipal.getUsername());
+	}
 
 	public String generateJwtToken(Authentication authentication) {
 
@@ -35,6 +39,14 @@ public class JwtUtils {
 				.signWith(SignatureAlgorithm.HS512, jwtSecret)
 				.compact();
 	}
+
+	public String generateTokenFromUsername(String username) {
+		return Jwts.builder().setSubject(username).setIssuedAt(new Date())
+				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+				.signWith(SignatureAlgorithm.HS512, jwtSecret)
+				.compact();
+	}
+
 
 	public String getUserNameFromJwtToken(String token) {
 		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();

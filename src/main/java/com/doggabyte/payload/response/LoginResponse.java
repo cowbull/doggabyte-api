@@ -1,6 +1,6 @@
 package com.doggabyte.payload.response;
 
-public class ResponseForFront<O> extends ResponseBasic<O> {
+public class LoginResponse<O> extends ResponseBasic<O> {
     protected Boolean success = true;
 
     public Boolean getSuccess() {

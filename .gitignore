@@ -2,4 +2,7 @@
 
 /target
 target/*
-target
+/target/classes/*
+target/classes/*
+.idea
+.idea/*

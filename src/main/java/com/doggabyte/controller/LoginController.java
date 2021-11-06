@@ -1,15 +1,15 @@
 package com.doggabyte.controller;
 
 import com.doggabyte.exception.InvalidJWTException;
-import com.doggabyte.exception.RestExceptionHandler;
-import com.doggabyte.exception.UserNotFoundException;
-import com.doggabyte.model.ErrorResponse;
+import com.doggabyte.advice.TokenControllerAdvice;
+import com.doggabyte.model.RefreshToken;
+import com.doggabyte.payload.request.LogOutRequest;
+import com.doggabyte.payload.response.*;
 import com.doggabyte.model.User;
 import com.doggabyte.payload.request.UserLoginDetails;
-import com.doggabyte.payload.response.LoginStatus;
-import com.doggabyte.payload.response.ResponseForFront;
 import com.doggabyte.security.jwt.AuthTokenFilter;
 import com.doggabyte.security.jwt.JwtUtils;
+import com.doggabyte.security.services.RefreshTokenService;
 import com.doggabyte.security.services.UserDetailsImpl;
 import com.doggabyte.repository.RoleRepository;
 import com.doggabyte.repository.UserRepository;
@@ -27,18 +27,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api")
-public class UserController {
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+@RequestMapping("/api/login")
+public class LoginController {
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -59,29 +57,33 @@ public class UserController {
     AuthTokenFilter authTokenFilter;
 
     @Autowired
-    RestExceptionHandler restExceptionHandler;
+    TokenControllerAdvice tokenControllerAdvice;
 
-    @PostMapping("/login/account")
+    @Autowired
+    RefreshTokenService refreshTokenService;
+
+    @PostMapping("/account")
     public ResponseEntity<?> validateLogin(@Valid @RequestBody UserLoginDetails loginUser){
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
 
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginUser.getUsername(), loginUser.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtUtils.generateJwtToken(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            List<String> roles = userDetails.getAuthorities().stream()
-                    .map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.toList());
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-            return ResponseEntity.ok(new LoginStatus(jwt, loginUser.getType(), roles, "ok"));
-        }catch (Exception e) {
-            return restExceptionHandler.handleInvalidLoginException(e);
-      }
+        String jwt = jwtUtils.generateJwtToken(userDetails);
+
+        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+        return ResponseEntity.ok(new LoginStatus(jwt, loginUser.getType(), roles, "ok", refreshToken.getToken(),
+                userDetails.getId(), userDetails.getUsername(), userDetails.getEmail()));
+
     }
 
-    @GetMapping("/login/currentUser")
+    @GetMapping("/currentUser")
     public ResponseEntity<?> getCurrentUser(HttpServletRequest request, HttpServletResponse response) {
         try {
             String jwt = authTokenFilter.parseJwt(request);
@@ -90,7 +92,7 @@ public class UserController {
                 User user = userRepository.findByName(username)
                         .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
-                ResponseForFront<User> result = new ResponseForFront<User>();
+                LoginResponse<User> result = new LoginResponse<User>();
                 result.setSuccess(true);
                 result.setData(user);
                 return ResponseEntity.ok(result);
@@ -101,15 +103,16 @@ public class UserController {
                                 (HttpStatus.OK.value(), "当前用户已过期，请重新登录！", false));
             }
         } catch (InvalidJWTException e) {
-            return restExceptionHandler.handleInvalidJWTException(e);
+            return ResponseEntity.ok().body(tokenControllerAdvice.handleInvalidJWTException(e));
         }
     }
 
-    @PostMapping("/login/outLogin")
-    public ResponseForFront<?> outLogin(HttpServletRequest request){
-        ResponseForFront<?> result = new ResponseForFront<>();
+    @PostMapping("/outLogin")
+    public ResponseEntity<?> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
+        refreshTokenService.deleteByUserId(logOutRequest.getUserId());
+        LoginResponse<?> result = new LoginResponse<>();
         result.setSuccess(true);
         result.setData(null);
-        return result;
+        return ResponseEntity.ok(result);
     }
 }

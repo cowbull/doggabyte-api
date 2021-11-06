@@ -1,12 +1,20 @@
 package com.doggabyte.exception;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Serial;
 
 /**
  * InvalidJWTException is thrown when jwt is invalid
  */
+@ResponseStatus(HttpStatus.FORBIDDEN)
 public class InvalidJWTException extends Exception {
+    @Serial
+    private static final long serialVersionUID = 0;
+
     private final int errorCode;
     private final String errorMessage;
 
@@ -30,11 +38,12 @@ public class InvalidJWTException extends Exception {
         super.printStackTrace(s);
     }
 
-    public int getErrorCode() {
+    public int getCode() {
         return errorCode;
     }
 
-    public String getErrorMessage() {
+    @Override
+    public String getMessage() {
         return errorMessage;
     }
 
